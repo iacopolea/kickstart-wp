@@ -81,18 +81,10 @@ composer install
 ```
 Ok ci ha installato wp e siamo contenti, e adesso?
 
+7 - vai alla cartella del tema e esegui
+
 ```sh
-
+npm install
+bower install
 ```
-```sh
-
-```
-```sh
-
-```
-```sh
-
-```
-
-
-
+Sei in bolla, divertiti.
