@@ -1,72 +1,98 @@
-# [Bedrock](https://roots.io/bedrock/)
-[![Build Status](https://travis-ci.org/roots/bedrock.svg)](https://travis-ci.org/roots/bedrock)
+#[Kickstart WP](https://github.com/iacopolea/kickstart-wp)
 
-Bedrock is a modern WordPress stack that helps you get started with the best development tools and project structure.
+KickStart WP vuole essere uno strumento per iniziare velocemente a sviluppare un sito web con Worpress in modo professionale.
+È basato su [Bedrock](https://roots.io/bedrock/) e # [Sage](https://roots.io/sage/).
+È importante leggere bene la documentazione riguardo questi due package.
+Su github sono [https://github.com/roots/bedrock.git](https://github.com/roots/bedrock.git), e [https://github.com/roots/sage](https://github.com/roots/sage).
 
-Much of the philosophy behind Bedrock is inspired by the [Twelve-Factor App](http://12factor.net/) methodology including the [WordPress specific version](https://roots.io/twelve-factor-wordpress/).
 
-## Features
+##Uso di questo strumento
+Ci sono alcuni passi da eseguire.
+Settare un buon ambiente di lavoro è complicato all'inizio ma da soddisfazione e permette di velocizzare il proprio workflow quando si eseguono sempre le stesse operazioni.
 
-* Better folder structure
-* Dependency management with [Composer](http://getcomposer.org)
-* Easy WordPress configuration with environment specific files
-* Environment variables with [Dotenv](https://github.com/vlucas/phpdotenv)
-* Autoloader for mu-plugins (use regular plugins as mu-plugins)
+###DATABASE
+In questo esempio ho settato un web server con php e mysql sul mio computer (una ottima guida [qui](http://jason.pureconcepts.net/2014/11/install-apache-php-mysql-mac-os-x-yosemite/)) e ho impostato i [virtualhost](http://jason.pureconcepts.net/2014/11/configure-apache-virtualhost-mac-os-x/).
+Usciti vivi da questo passaggio non ci resta che:
 
-Use [Trellis](https://github.com/roots/trellis) for additional features:
+1 - Creare un nuovo database su [http://localhost/phpmyadmin](http://localhost/phpmyadmin)
+2 - Aprire un terminale, passare a root e editare un paio di file
 
-* Easy development environments with [Vagrant](http://www.vagrantup.com/)
-* Easy server provisioning with [Ansible](http://www.ansible.com/) (Ubuntu 14.04, PHP 5.6 or HHVM, MariaDB)
-* One-command deploys
+```sh
+sudo su -
+vi /etc/apache2/vhosts/NOME-DEL-SITO.conf
+```
+aggiungere questa configurazione: (cambiare con la propria struttura di cartelle!)
 
-See a complete working example in the [roots-example-project.com repo](https://github.com/roots/roots-example-project.com).
+```sh
+<VirtualHost *:80>
+        DocumentRoot "/Users/Iacopo/Sites/NOME-DEL-SITO/site/web/"
+        ServerName NOME-DEL-SITO.local
+        ErrorLog "/private/var/log/apache2/NOME-DEL-SITO.local-error_log"
+        CustomLog "/private/var/log/apache2/NOME-DEL-SITO.local-access_log" common
 
-## Requirements
+        <Directory "/Users/Iacopo/Sites/NOME-DEL-SITO/site/web/">
+            AllowOverride All
+            Require all granted
+        </Directory>
+</VirtualHost>
+```
+Salvare, chiudere e ciao.
+Per accedere a NOME-DEL-SITO.local devi editare l'hosts file
 
-* PHP >= 5.5
-* Composer - [Install](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx)
+```sh
+vi /etc/hosts
+```
+e aggiungere:
+```sh
+127.0.0.1       NOME-DEL-SITO.local
+```
 
-## Installation
+3 - Ok riavvia Apache e pulisci la cache dei DNS
+```sh
+apachectl restart
+dscacheutil -flushcache
+```
 
-1. Clone the git repo - `git clone https://github.com/roots/bedrock.git`
-2. Run `composer install`
-3. Copy `.env.example` to `.env` and update environment variables:
-  * `DB_NAME` - Database name
-  * `DB_USER` - Database user
-  * `DB_PASSWORD` - Database password
-  * `DB_HOST` - Database host
-  * `WP_ENV` - Set to environment (`development`, `staging`, `production`)
-  * `WP_HOME` - Full URL to WordPress home (http://example.com)
-  * `WP_SITEURL` - Full URL to WordPress including subdirectory (http://example.com/wp)
-  * `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT` - Generate with [wp-cli-dotenv-command](https://github.com/aaemnnosttv/wp-cli-dotenv-command) or from the [WordPress Salt Generator](https://api.wordpress.org/secret-key/1.1/salt/)
-4. Add theme(s) in `web/app/themes` as you would for a normal WordPress site.
-5. Set your site vhost document root to `/path/to/site/web/` (`/path/to/site/current/web/` if using deploys)
-6. Access WP admin at `http://example.com/wp/wp-admin`
+###Installazione di Kickstart Wp
+Per quanto sia una vera rottura, dobbiamo essere sicuri di aver installato tutti i pacchetti e le dipendenze di Bedrock e Sage,
+tipo Composer, Node.js, npm, Bower, wp-cli, e dio sa solo cos'altro (e rispettive documentazioni hanno info al riguardo, giuro).
 
-## Deploys
+4 - Possiamo procedere clonando la repo di kickstart-wp.
+Ci posizioniamo nella cartella del sito e la copiamo dentro e tolgo il .git
 
-There are two methods to deploy Bedrock sites out of the box:
+```sh
+git clone https://github.com/iacopolea/kickstart-wp . && rm -rf .git
+```
+Rinomino la cartella con un più generico `site`.
 
-* [Trellis](https://github.com/roots/trellis)
-* [bedrock-capistrano](https://github.com/roots/bedrock-capistrano)
+5 - Ora settiamo il file .env a partire dal template inserendo le info del database "appena" creato.
 
-Any other deployment method can be used as well with one requirement:
+```sh
+wp dotenv init --file=.env --with-salts --template=.env.example
+```
+usare `wp dotenv salts regenerate` se c'erano già le chiavi
 
-`composer install` must be run as part of the deploy process.
+6 - Avvio composer che mi installa le dipendenze
+NB ho aggiunto ACF come plugin di default perchè lo uso spesso (è da attivare nella sezione plugin).
+Nella cartella site eseguire composer e pregare che vada tutto bene.
 
-## Documentation
+```sh
+composer install
+```
+Ok ci ha installato wp e siamo contenti, e adesso?
 
-Bedrock documentation is available at [https://roots.io/bedrock/docs/](https://roots.io/bedrock/docs/).
+```sh
 
-## Contributing
+```
+```sh
 
-Contributions are welcome from everyone. We have [contributing guidelines](CONTRIBUTING.md) to help you get started.
+```
+```sh
 
-## Community
+```
+```sh
 
-Keep track of development and community news.
+```
 
-* Participate on the [Roots Discourse](https://discourse.roots.io/)
-* Follow [@rootswp on Twitter](https://twitter.com/rootswp)
-* Read and subscribe to the [Roots Blog](https://roots.io/blog/)
-* Subscribe to the [Roots Newsletter](https://roots.io/subscribe/)
+
+
