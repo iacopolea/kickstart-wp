@@ -1,28 +1,19 @@
 {
-  "name": "roots/bedrock",
+  "name": "Kickstart-WP",
   "type": "project",
   "license": "MIT",
-  "description": "A modern WordPress stack",
-  "homepage": "https://roots.io/bedrock/",
+  "description": "Kickstart a wp project based on Sage and Bedrock, a modern WordPress stack",
+  "homepage": "https://github.com/iacopolea/kickstart-wp",
   "authors": [
     {
-      "name": "Scott Walkinshaw",
-      "email": "scott.walkinshaw@gmail.com",
-      "homepage": "https://github.com/swalkinshaw"
-    },
-    {
-      "name": "Ben Word",
-      "email": "ben@benword.com",
-      "homepage": "https://github.com/retlehs"
+      "name": "Iacopo Leardini",
+      "email": "iacopo.lea@gmail.com",
+      "homepage": "https://github.com/iacopolea"
     }
   ],
   "keywords": [
-    "bedrock", "roots", "wordpress", "stack", "composer", "vagrant", "wp"
+    "Kickstart-wp", "Sage", "bedrock", "roots", "wordpress", "stack", "composer", "vagrant", "wp"
   ],
-  "support": {
-    "issues": "https://github.com/roots/bedrock/issues",
-    "forum": "https://discourse.roots.io/category/bedrock"
-  },
   "config": {
     "preferred-install": "dist"
   },
